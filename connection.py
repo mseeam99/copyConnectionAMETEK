@@ -8,6 +8,7 @@ class ModbusError(RuntimeError):
     """Raised on Modbus exception responses or malformed frames."""
 
 
+
 # ==============================
 # Low-level helpers
 # ==============================
@@ -29,6 +30,12 @@ def _u16(name: str, v: int):
         raise ValueError(f"{name} must be 0–65535.")
 
 
+
+
+
+
+
+
 # ==============================
 # FC06 — Write Single Holding Register (u16)
 # ==============================
@@ -37,9 +44,9 @@ def write_single_holding_register_fc06(
     address: int,
     value: int,
     timeout: float = 3.0,
-    ip: str = "10.17.100.101",
+    ip: str = "10.17.100.105",
     port: int = 502,
-    unit_id: int = 1
+    unit_id: int = 2
 ) -> Tuple[int, int]:
     _u16("transaction_id", transaction_id)
     _u8("unit_id", unit_id)
@@ -77,9 +84,9 @@ def write_multiple_holding_registers_fc16(
     address: int,           # starting register
     values: List[int],      # list of u16 words
     timeout: float = 3.0,
-    ip: str = "10.17.100.101",
+    ip: str = "10.17.100.105",
     port: int = 502,
-    unit_id: int = 1
+    unit_id: int = 2
 ) -> Tuple[int, int]:
     _u16("transaction_id", transaction_id)
     _u8("unit_id", unit_id)
@@ -116,6 +123,8 @@ def write_multiple_holding_registers_fc16(
     return echo_addr, echo_count
 
 
+
+
 # ==============================
 # Float mirror helpers
 # ==============================
@@ -145,9 +154,9 @@ def write_segments(
     segments: List[Dict[str, Any]],
     start_segment: int = 1,
     program_base: int = 8328,
-    ip: str = "10.17.100.101",
+    ip: str = "10.17.100.105",
     port: int = 502,
-    unit_id: int = 1
+    unit_id: int = 2
 ) -> None:
 
     def segment_start(program_base_: int, seg_num: int) -> int:
@@ -225,9 +234,9 @@ def write_program_header(
     program_base: int,
     Program_Cycles_8332: int,
     Program_End_Type_8334: int,
-    ip: str = "10.17.100.101",
+    ip: str = "10.17.100.105",
     port: int = 502,
-    unit_id: int = 1
+    unit_id: int = 2
 ) -> None:
    
     cyc  = int(Program_Cycles_8332)   & 0xFFFF
@@ -247,16 +256,16 @@ if __name__ == "__main__":
     try:
         write_program_header(
             program_base=8328,
-            Program_Cycles_8332=9,
+            Program_Cycles_8332=2,
             Program_End_Type_8334=1,
         )
 
         segments = [
-            dict(segment_type="RAMP",  target_setpoint=119.52,  time_or_dwell=50, event_outputs_mask=0),
+            dict(segment_type="RAMP",  target_setpoint=222.52,  time_or_dwell=89, event_outputs_mask=0),
             dict(segment_type="DWELL",                          time_or_dwell=30, event_outputs_mask=0),
             dict(segment_type="DWELL",                          time_or_dwell=35, event_outputs_mask=0),
             dict(segment_type="DWELL",                          time_or_dwell=40, event_outputs_mask=0),
-            dict(segment_type="RAMP",  target_setpoint=7,       time_or_dwell=40, event_outputs_mask=0),
+            dict(segment_type="RAMP",  target_setpoint=23,       time_or_dwell=40, event_outputs_mask=0),
             dict(segment_type="END",   event_outputs_mask=0),
         ]
 
